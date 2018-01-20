@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using DotArguments;
 using DotArguments.Attributes;
 
-namespace WemoScanner
+namespace FindingWemoConsole
 {
 	public class CommandLineArguments
 	{

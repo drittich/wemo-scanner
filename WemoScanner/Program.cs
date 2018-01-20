@@ -1,51 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.Linq;
+using FindingWemoNS;
 
-namespace WemoScanner
+namespace FindingWemoConsole
 {
 	class Program
 	{
 		static void Main(string[] arguments)
 		{
-			CommandLineArguments args = GetArguments(arguments);
-
-			int lastOctetStart = args.IpRangeStartTyped.GetAddressBytes()[3];
-			int lastOctetEnd = args.IpRangeEndTyped.GetAddressBytes()[3];
-			var possiblePorts = new List<int> { 49154, 49153, 49152 };
-			var ipBytes = args.IpRangeStartTyped.GetAddressBytes();
-			string subnet = $"{ipBytes[0]}.{ipBytes[1]}.{ipBytes[2]}";
-
-			using (var httpClient = new HttpClient())
+			CommandLineArguments args = null;
+			try
 			{
-				httpClient.Timeout = TimeSpan.FromSeconds(5);
-				Parallel.For(lastOctetStart, lastOctetEnd + 1, (index) =>
-				{
-					foreach (var port in possiblePorts)
-					{
-						var url = $"http://{subnet}.{index}:{port}/setup.xml";
-						var responseResult = httpClient.GetAsync(url);
-						string resp = null;
-						try
-						{
-							resp = responseResult.Result.Content.ReadAsStringAsync().Result;
-						}
-						catch { }
-
-						if (!string.IsNullOrWhiteSpace(resp))
-						{
-							var setup = WemoSetup.GetFromXml(resp);
-							Console.WriteLine($"Found at {subnet}.{index}:{port} - Name:[{setup.device.friendlyName}] MAC:{setup.device.macAddress}");
-							break;
-						}
-					}
-				});
+				args = GetArguments(arguments);
 			}
+			catch
+			{
+				ExitWithCode(1);
+			}
+			var result = FindingWemo.Search(args.IpRangeStartTyped, args.IpRangeEndTyped, args.Name).SingleOrDefault();
+			if (result == null)
+				Console.WriteLine($"Not found");
+			else
+				Console.WriteLine($"Found at {result.IPAddress}:{result.Port} - Name:[{result.Name}]");
 
 			ExitWithCode(0, "Done");
 		}
+
+
 
 		static CommandLineArguments GetArguments(string[] arguments)
 		{

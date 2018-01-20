@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Xml.Serialization;
 
-namespace WemoScanner
+namespace FindingWemoNS
 {
 
 	// NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.

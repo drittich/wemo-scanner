@@ -48,11 +48,16 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WemoSetup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FindingWemo\FindingWemo.csproj">
+      <Project>{712dc8bb-d6fc-43f6-afbf-ee92634fd4fe}</Project>
+      <Name>FindingWemo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
